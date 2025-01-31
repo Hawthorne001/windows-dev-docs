@@ -1,27 +1,30 @@
 ---
 title: Launch the Windows Settings app
-description: Learn how to launch the Windows Settings app from your app using the ms-settings URI scheme.
+description: Learn how to launch the Windows Settings app from your own Windows apps using the ms-settings URI scheme.
 ms.assetid: C84D4BEE-1FEE-4648-AD7D-8321EAC70290
-ms.date: 03/21/2023
-ms.topic: article
-keywords: windows 10, uwp
+ms.date: 11/27/2024
+ms.topic: concept-article
+keywords: windows 10, windows, settings, windows 11, uwp, uri
 ms.localizationpriority: medium
 dev_langs:
   - csharp
   - cppwinrt
+# Customer intent: As a Windows developer, I want to learn how to launch the Windows Settings app from my app using the ms-settings URI scheme.
 ---
 
 # Launch the Windows Settings app
 
-**Important APIs**
+Learn how to launch the Windows Settings app. This topic describes the `ms-settings:` URI scheme. Use this URI scheme to launch the Windows Settings app to specific settings pages.
+
+Launching to the Settings app is an important part of writing a privacy-aware app. If your app can't access a sensitive resource, we recommend providing the user a convenient link to the privacy settings for that resource. For more information, see [Guidelines for privacy-aware apps](../security/index.md).
+
+## Important APIs
+
+The following Windows Runtime (WinRT) APIs are used in this topic:
 
 - [**LaunchUriAsync**](/uwp/api/windows.system.launcher.launchuriasync)
 - [**PreferredApplicationPackageFamilyName**](/uwp/api/windows.system.launcheroptions.preferredapplicationpackagefamilyname)
 - [**DesiredRemainingView**](/uwp/api/windows.system.launcheroptions.desiredremainingview)
-
-Learn how to launch the Windows Settings app. This topic describes the `ms-settings:` URI scheme. Use this URI scheme to launch the Windows Settings app to specific settings pages.
-
-Launching to the Settings app is an important part of writing a privacy-aware app. If your app can't access a sensitive resource, we recommend providing the user a convenient link to the privacy settings for that resource. For more info, see [Guidelines for privacy-aware apps](../security/index.md).
 
 ## How to launch the Settings app
 
@@ -45,7 +48,7 @@ In this example, a Hyperlink XAML control is used to launch the privacy settings
 
 ### Calling LaunchUriAsync
 
-Alternatively, your app can call the [**LaunchUriAsync**](/uwp/api/windows.system.launcher.launchuriasync) method to launch the **Settings** app. This example shows how to launch to the privacy settings page for the camera using the `ms-settings:privacy-webcam` URI.
+Alternatively, your app can call the [LaunchUriAsync](/uwp/api/windows.system.launcher.launchuriasync) method to launch the **Settings** app. This example shows how to launch to the privacy settings page for the camera using the `ms-settings:privacy-webcam` URI.
 
 ```cs
 bool result = await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-webcam"));
@@ -57,7 +60,7 @@ bool result = co_await Windows::System::Launcher::LaunchUriAsync(Windows::Founda
 
 The code above launches the privacy settings page for the camera:
 
-:::image type="content" source="images/privacyawarenesssettingsapp.png" alt-text="camera privacy settings.":::
+:::image type="content" source="images/privacyawarenesssettingsapp.png" alt-text="A screenshot of the Windows camera privacy settings.":::
 
 For more info about launching URIs, see [Launch the default app for a URI](launch-default-app.md).
 
@@ -80,30 +83,14 @@ The following sections describe different categories of ms-settings URIs used to
 - [Phone](#phone)
 - [Privacy](#privacy)
 - [Search](#search)
+- [Sound](#sound)
 - [Surface Hub](#surface-hub)
 - [System](#system)
 - [Time and language](#time-and-language)
 - [Update and security](#update-and-security)
-- [User accounts](#user-accounts)
 
 > [!NOTE]
-> Whether a settings page is available varies by Windows SKU. The notes column also captures additional requirements that must be met for a page to be available.
-
-<!-- TODO: 
-* ms-settings:controlcenter (not working on 07/11/2022)
-* ms-settings:holographic (not working on 07/11/2022)
-* ms-settings:keyboard-advanced (not working on 07/11/2022)
-* ms-settings:regionlanguage-adddisplaylanguage (Goes to Language and Region page - 07/11/2022)
-* ms-settings:regionlanguage-setdisplaylanguage (Goes to Language and Region page - 07/11/2022)
-* ms-settings:signinoptions-launchpinenrollment (not working on 07/11/2022)
-* ms-settings:storagecleanup (not working on 07/11/2022)
-* ms-settings:update-security (not working on 07/11/2022) 
-* ms-settings:advanced-apps (not working on 07/11/2022)
-* ms-settings:gaming-xboxnetworking (not working on 07/11/2022) 
-* ms-settings:datausage (Goes to Network & internet page - 07/11/2022) 
-* ms-settings:personalization-textinput (not working on 07/11/2022)
-* ms-settings:sound-defaultoutputdevices (not working on 07/11/2022)
-* ms-settings:sound-defaultinputdevices (not working on 07/11/2022) -->
+> The availability of some settings pages varies by Windows version and SKU. For some settings, the URI column also captures some usage information and any additional requirements that must be met for a page to be available.
 
 ### Accounts
 
@@ -112,9 +99,12 @@ The following sections describe different categories of ms-settings URIs used to
 | Access work or school | ms-settings:workplace |
 | Email & app accounts  | ms-settings:emailandaccounts |
 | Family & other people | ms-settings:otherusers |
+| Provisioning | ms-settings:provisioning (only available on mobile and if the enterprise has deployed a provisioning package)<br>ms-settings:workplace-provisioning (only available if enterprise has deployed a provisioning package) |
+| Repair token | ms-settings:workplace-repairtoken |
 | Set up a kiosk | ms-settings:assignedaccess |
 | Sign-in options | ms-settings:signinoptions<br>ms-settings:signinoptions-dynamiclock |
 | Sync your settings | ms-settings:sync<br>ms-settings:backup (**Backup page deprecated in Windows 11**) |
+| Windows Anywhere | ms-settings:windowsanywhere (device must be Windows Anywhere-capable) |
 | Windows Hello setup | ms-settings:signinoptions-launchfaceenrollment<br>ms-settings:signinoptions-launchfingerprintenrollment |
 | Your info | ms-settings:yourinfo |
 
@@ -123,7 +113,7 @@ The following sections describe different categories of ms-settings URIs used to
 |Settings page| URI |
 |-------------|-----|
 | Apps & Features | ms-settings:appsfeatures |
-| App features | ms-settings:appsfeatures-app (Reset, manage add-on & downloadable content, etc. for the app) <br><br> To access this page with a URI, use the ms-settings:appsfeatures-app URI and pass an optional parameter of the _package family name_ of the app. |
+| App features | ms-settings:appsfeatures-app (Reset, manage add-on & downloadable content, etc. for the app) <br><br> To access this page with a URI, use the ms-settings:appsfeatures-app URI and pass an optional parameter of the *package family name* of the app.<br><br>Example: `ms-settings:appsfeatures-app?<PFN>` |
 | Apps for websites | ms-settings:appsforwebsites |
 | Default apps | ms-settings:defaultapps (**Behavior introduced in Windows 11, version 21H2 (with 2023-04 Cumulative Update) or 22H2 (with 2023-04 Cumulative Update), or later.**)<br/>Append the query string parameter in the following formats using the Uri-escaped name of an app to directly launch the default settings page for that app:<br/><br/>- registeredAppMachine=\<Uri-escaped per machine installed name of app\><br/>- registeredAppUser=\<Uri-escaped per user installed name of app\><br/>- registeredAUMID=\<Uri-escaped Application User Model ID\><br/><br/>For more information, see [Launch the Default Apps settings page](launch-default-apps-settings.md). |
 | Default browser settings | ms-settings:defaultbrowsersettings (**Deprecated in Windows 11**) |
@@ -148,6 +138,9 @@ The following sections describe different categories of ms-settings URIs used to
 | Searching Windows | ms-settings:cortana-windowssearch |
 | Talk to Cortana | ms-settings:cortana-language<br/>ms-settings:cortana<br/>ms-settings:cortana-talktocortana |
 
+> [!IMPORTANT]
+> Cortana voice assistance in Windows as a standalone app was retired in the spring of 2023. For more information, see [End of support for Cortana](https://support.microsoft.com/topic/end-of-support-for-cortana-d025b39f-ee5b-4836-a954-0ab646ee1efa).
+
 > [!NOTE]
 > This Settings section on desktop will be called Search when the PC is set to regions where Cortana is not currently available or Cortana has been disabled. Cortana-specific pages (Cortana across my devices, and Talk to Cortana) will not be listed in this case.
 
@@ -168,7 +161,7 @@ The following sections describe different categories of ms-settings URIs used to
 | Text Suggestions | ms-settings:devicestyping-hwkbtextsuggestions |
 | Typing | ms-settings:typing |
 | USB | ms-settings:usb |
-| Wheel | ms-settings:wheel (only available if Dial is paired) |
+| Wheel | ms-settings:wheel (only available if a **Surface Dial** device is paired) |
 | Your phone | ms-settings:mobile-devices  |
 
 ### Ease of access
@@ -180,7 +173,6 @@ The following sections describe different categories of ms-settings URIs used to
 | Color filters | ms-settings:easeofaccess-colorfilter </br> ms-settings:easeofaccess-colorfilter-adaptivecolorlink </br> ms-settings:easeofaccess-colorfilter-bluelightlink |
 | Display | ms-settings:easeofaccess-display |
 | Eye control | ms-settings:easeofaccess-eyecontrol |
-| Fonts | ms-settings:fonts |
 | High contrast | ms-settings:easeofaccess-highcontrast |
 | Keyboard | ms-settings:easeofaccess-keyboard |
 | Magnifier | ms-settings:easeofaccess-magnifier |
@@ -195,7 +187,7 @@ The following sections describe different categories of ms-settings URIs used to
 
 |Settings page| URI |
 |-------------|-----|
-| Extras | ms-settings:extras (only available if "settings apps" are installed, for example, by a 3rd party) |
+| Extras | ms-settings:extras (only available if "settings apps" have been installed, for example, by a 3rd party) |
 
 ### Family Group
 
@@ -216,7 +208,12 @@ The following sections describe different categories of ms-settings URIs used to
 ### Mixed reality
 
 > [!NOTE]
-> These settings are only available if the Mixed Reality Portal app is installed.
+> These settings are only available if the [Mixed Reality Portal](https://apps.microsoft.com/detail/9ng1h8b3zc7m) app is installed.
+
+> [!IMPORTANT]
+> Windows Mixed Reality devices are not supported with Windows 11, version 24H2 and newer.
+>
+> Windows Mixed Reality support is limited to Windows 10, version 20H2 through Windows 11, version 23H2.
 
 | Settings page | URI |
 |---------------|-----|
@@ -251,12 +248,16 @@ The following sections describe different categories of ms-settings URIs used to
 | Background | ms-settings:personalization-background |
 | Choose which folders appear on Start | ms-settings:personalization-start-places |
 | Colors | ms-settings:personalization-colors<br/>ms-settings:colors |
+| Customize Copilot key on keyboard | ms-settings:personalization-textinput-copilot-hardwarekey |
+| Dynamic Lighting | ms-settings:personalization-lighting |
+| Fonts | ms-settings:fonts |
 | Glance | ms-settings:personalization-glance (**Deprecated in Windows 10, version 1809 and later**) |
 | Lock screen | ms-settings:lockscreen |
 | Navigation bar | ms-settings:personalization-navbar (**Deprecated in Windows 10, version 1809 and later**) |
 | Personalization (category) | ms-settings:personalization |
 | Start | ms-settings:personalization-start |
 | Taskbar | ms-settings:taskbar |
+| Text input | ms-settings:personalization-textinput |
 | Touch Keyboard| ms-settings:personalization-touchkeyboard |
 | Themes | ms-settings:themes |
 
@@ -277,7 +278,7 @@ The following sections describe different categories of ms-settings URIs used to
 | Advertising ID | ms-settings:privacy-advertisingid (**Deprecated in Windows 10, version 1809 and later**) |
 | App diagnostics | ms-settings:privacy-appdiagnostics |
 | Automatic file downloads | ms-settings:privacy-automaticfiledownloads |
-| Background Apps | ms-settings:privacy-backgroundapps (**Deprecated in Windows 11, 21H2 and later**) <br><br> **Note:** In Windows 11, the background app permissions are accessed individually. To view the permissions, go to **Apps->Installed apps** and then select **"..."** on a modern app and choose **Advanced options**. The advanced page is present for modern apps, and the **Background apps permissions** section will be present unless a group policy has been set or the user’s global toggle value (the deprecated setting from Windows 10) is set. To access this page with a URI, use the `ms-settings:appsfeatures-app` URI and pass an optional parameter of the _package family name_ of the app. |
+| Background Apps | ms-settings:privacy-backgroundapps (**Deprecated in Windows 11, 21H2 and later**) <br><br> **Note:** In Windows 11, the background app permissions are accessed individually. To view the permissions, go to **Apps->Installed apps** and then select **"..."** on a modern app and choose **Advanced options**. The advanced page is present for modern apps, and the **Background apps permissions** section will be present unless a group policy has been set or the user’s global toggle value (the deprecated setting from Windows 10) is set. To access this page with a URI, use the `ms-settings:appsfeatures-app` URI and pass an optional parameter of the *package family name* of the app. |
 | Background Spatial Perception | ms-settings:privacy-backgroundspatialperception |
 | Calendar | ms-settings:privacy-calendar |
 | Call history | ms-settings:privacy-callhistory |
@@ -315,6 +316,18 @@ The following sections describe different categories of ms-settings URIs used to
 | Search more details | ms-settings:search-moredetails |
 | Search Permissions | ms-settings:search-permissions |
 
+### Sound
+
+|Settings page| URI |
+|-------------|-----|
+| Volume mixer | ms-settings:apps-volume |
+| Sound | ms-settings:sound |
+| Sound devices | ms-settings:sound-devices |
+| Default microphone | ms-settings:sound-defaultinputproperties |
+| Default audio output| ms-settings:sound-defaultoutputproperties |
+| Audio device properties<br/>(specific device) | ms-settings:sound-properties?endpointId={0.0.0.00000000}.{aaaaaaaa-0000-1111-2222-bbbbbbbbbbbb}<br/><br/>**Note:** User of URI must know the `endpointId` string to use. |
+| Audio device properties<br/>(specific device) | ms-settings:sound-properties?interfaceId=\\\\?\\SWD#MMDEVAPI#{3.0.0.00000003}.{bbbbbbbb-1111-2222-3333-cccccccccccc}#{cccccccc-2222-3333-4444-dddddddddddd}<br/><br/>**Note:** User of URI must know the `interfaceId` string to use and the string must be escaped correctly before sending. |
+
 ### Surface Hub
 
 |Settings page| URI |
@@ -331,18 +344,16 @@ The following sections describe different categories of ms-settings URIs used to
 |-------------|-----|
 | About | ms-settings:about |
 | Advanced display settings | ms-settings:display-advanced (only available on devices that support advanced display options) |
-| App volume and device preferences | ms-settings:apps-volume (**Added in Windows 10, version 1903**) |
 | Battery Saver | ms-settings:batterysaver (only available on devices that have a battery, such as a tablet) |
 | Battery Saver settings | ms-settings:batterysaver-settings (only available on devices that have a battery, such as a tablet) |
 | Battery use | ms-settings:batterysaver-usagedetails (only available on devices that have a battery, such as a tablet) |
 | Clipboard | ms-settings:clipboard |
-| Display | ms-settings:display |
 | Default Save Locations | ms-settings:savelocations |
-| Display | ms-settings:screenrotation |
+| Display | ms-settings:display<br>ms-settings:screenrotation |
 | Duplicating my display | ms-settings:quietmomentspresentation |
 | During these hours | ms-settings:quietmomentsscheduled |
 | Encryption | ms-settings:deviceencryption |
-| Energy recommendatations | ms-settings:energyrecommendations **(Added in February Moment update for Windows 11, Version 22H2, Build 22624)** |
+| Energy recommendations | ms-settings:energyrecommendations **(Available in February Moment update for Windows 11, Version 22H2, Build 22624 or later)** |
 | Focus assist | ms-settings:quiethours |
 | Graphics Settings | ms-settings:display-advancedgraphics (only available on devices that support advanced graphics options) |
 | Graphics Default Settings | ms-settings:display-advancedgraphics-default |
@@ -357,8 +368,6 @@ The following sections describe different categories of ms-settings URIs used to
 | Phone | ms-settings:phone (**Deprecated in Windows 10, version 1809 and later**) |
 | Power & sleep | ms-settings:powersleep |
 | Presence sensing | ms-settings:presence (**Added in May Moment update for Windows 11, Version 22H2, Build 22624**) |
-| Sound | ms-settings:sound |
-| Sound devices | ms-settings:sound-devices |
 | Storage | ms-settings:storagesense |
 | Storage Sense | ms-settings:storagepolicies |
 | Storage recommendations | ms-settings:storagerecommendations |
@@ -375,9 +384,6 @@ The following sections describe different categories of ms-settings URIs used to
 | Pinyin IME settings | ms-settings:regionlanguage-chsime-pinyin (available if the Microsoft Pinyin input method editor is installed)</br>ms-settings:regionlanguage-chsime-pinyin-domainlexicon<br/>ms-settings:regionlanguage-chsime-pinyin-keyconfig<br/>ms-settings:regionlanguage-chsime-pinyin-udp |
 | Speech | ms-settings:speech |
 | Wubi IME settings  | ms-settings:regionlanguage-chsime-wubi (available if the Microsoft Wubi input method editor is installed) |
-| Add display language | ms-settings:regionlanguage-adddisplaylanguage |
-| Language options | ms-settings:regionlanguage-languageoptions |
-| Set display language | ms-settings:regionlanguage-setdisplaylanguage |
 
 ### Update and security
 
@@ -401,15 +407,8 @@ The following sections describe different categories of ms-settings URIs used to
 | Windows Update-Seeker on demand| ms-settings:windowsupdate-seekerondemand |
 | Windows Update-View update history | ms-settings:windowsupdate-history |
 
-### User accounts
-
-|Settings page| URI |
-|-------------|-----|
-| Provisioning | ms-settings:workplace-provisioning (only available if enterprise has deployed a provisioning package) |
-| Repair token | ms-settings:workplace-repairtoken |
-| Provisioning | ms-settings:provisioning (only available on mobile and if the enterprise has deployed a provisioning package) |
-| Windows Anywhere | ms-settings:windowsanywhere (device must be Windows Anywhere-capable) |
-
-## See also
+## Related content
 
 [Launch the default app for a URI](launch-default-app.md)
+
+[Launching, resuming, and background tasks](index.md)
